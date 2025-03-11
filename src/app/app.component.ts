@@ -1,5 +1,4 @@
-import {Component, signal, WritableSignal} from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {ChangeDetectionStrategy, Component, signal, WritableSignal} from '@angular/core';
 import {Button} from "primeng/button";
 
 @Component({
@@ -7,13 +6,8 @@ import {Button} from "primeng/button";
   imports: [
     Button
   ],
-  template: `
-    <h2>Zoneless Sample Code</h2>
-    <p-button label="increment" (onClick)="onClickIncrement()"></p-button>
-    
-    <p>not signal val: {{ val }}</p>
-    <p>signal val: {{signalVal() }}</p>
-  `
+  changeDetection:ChangeDetectionStrategy.OnPush,
+  templateUrl:'./app.component.html'
 })
 export class AppComponent {
 
@@ -21,10 +15,20 @@ export class AppComponent {
 
   signalVal:WritableSignal<number> = signal<number>(0);
 
-  onClickIncrement = ():void => {
-    this.val = this.val+1
-
+  increment = ():void => {
     this.signalVal.update((v) => v+1)
   }
 
+  notSignalIncrement = ():void => {
+    this.val = this.val+1
+  }
+
+  constructor() {
+    setInterval(() => {
+      this.increment();
+      this.notSignalIncrement();
+
+      console.log('ok');
+    },1000)
+  }
 }
